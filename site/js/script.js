@@ -1400,7 +1400,7 @@
 
               if (output.hasClass('snackbars')) {
                 output.html(
-                  '<p><span class="icon text-middle fa fa-circle-o-notch fa-spin icon-xxs"></span><span>Sending</span></p>'
+                  '<p><span class="icon text-middle fa fa-circle-o-notch fa-spin icon-xxs"></span><span>Siunčia</span></p>'
                 );
                 output.addClass('active');
               }
