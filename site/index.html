@@ -629,7 +629,7 @@
             class="rd-form rd-form-variant-2 rd-mailform"
             data-form-output="form-output-global"
             data-form-type="contact"
-            id="contact-form"
+            id="main-contact-form"
           >
             <div class="row row-14 gutters-14">
               <div class="col-md-4">
@@ -753,7 +753,7 @@
                 class="rd-form rd-form-variant-2 rd-mailform"
                 data-form-output="form-output-global"
                 data-form-type="contact-modal"
-                id="contact-form"
+                id="modal-contact-form"
               >
                 <div class="row row-14 gutters-14">
                   <div class="col-12">
@@ -833,30 +833,51 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
   // Inicializuokite EmailJS su savo Public Key
-  emailjs.init("txXXJF-GP8yAkKWae");
+emailjs.init("txXXJF-GP8yAkKWae"); // Pakeiskite į savo tikrąjį viešąjį raktą
 
-  document.getElementById("contact-form").addEventListener("submit", function(event) {
+// Funkcija formos apdorojimui
+function handleFormSubmit(form) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault(); // Sustabdo numatytąjį formos veikimą
 
     // Surinkite formos duomenis
     const templateParams = {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      message: document.getElementById("message").value
+      name: form.querySelector('input[name="name"]').value || "",
+      email: form.querySelector('input[name="email"]').value || "",
+      phone: form.querySelector('input[name="phone"]').value || "",
+      message: form.querySelector('textarea[name="message"]').value || "",
     };
 
+    // Patikrinkite, ar užpildyti privalomi laukai
+    if (!templateParams.name || !templateParams.email || !templateParams.message) {
+      document.getElementById("form-output-global").innerHTML =
+        '<div class="alert alert-danger">Prašome užpildyti visus privalomus laukus: vardą, el. paštą ir žinutę.</div>';
+      return;
+    }
+
     // Siųskite el. laišką per EmailJS
-    emailjs.send("service_78u0gye", "Gmail", templateParams)
-      .then(function(response) {
-        // Rodyti sėkmės pranešimą
-        document.getElementById("form-output-global").innerHTML = 
+    emailjs.send("service_78u0gye", "template_vpszb0o", templateParams) // Pakeiskite "template_XXXXXX" į savo šablono ID
+      .then(function (response) {
+        document.getElementById("form-output-global").innerHTML =
           '<div class="alert alert-success">Žinutė išsiųsta sėkmingai!</div>';
-      }, function(error) {
-        // Rodyti klaidos pranešimą
-        document.getElementById("form-output-global").innerHTML = 
+        form.reset(); // Išvalyti formą
+        setTimeout(() => {
+          document.getElementById("form-output-global").innerHTML = ""; // Išvalyti pranešimą po 5 sek.
+        }, 5000);
+      }, function (error) {
+        document.getElementById("form-output-global").innerHTML =
           '<div class="alert alert-danger">Klaida siunčiant žinutę: ' + JSON.stringify(error) + '</div>';
       });
   });
+}
+
+// Gaukite abi formas
+const mainForm = document.querySelector("#contacts .rd-mailform");
+const modalForm = document.querySelector("#modalCta .rd-mailform");
+
+// Pridėkite įvykių klausytojus
+if (mainForm) handleFormSubmit(mainForm);
+if (modalForm) handleFormSubmit(modalForm);
 </script>
     <!-- coded by Himic-->
   </body>
